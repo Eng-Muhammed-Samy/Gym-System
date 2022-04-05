@@ -44,12 +44,17 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-
-
-
-
     public function gym_member() // one to one realationship with user
     {
         return $this->hasOne(Gym_Member::class, 'user_id');
+    }
+    /**
+     * Get the user's avatar image.
+     *
+     * @return string
+     */
+    public function getAvatarImageAttribute($value)
+    {
+        return asset('avatars/'.$value);
     }
 }

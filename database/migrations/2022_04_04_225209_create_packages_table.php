@@ -13,15 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('packages', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('avatar_image')->default('default.jpg');
-            $table->string('password');
-            $table->enum('role', ['admin', 'gym_manager', 'city_manager', 'user'])->default('user');
-            $table->rememberToken();
+            $table->double('price');
+            $table->integer('session_count');
+            $table->foreignId('gym_id')->references('id')->on('gyms')->onDelete('cascade');
+            $table->float('discount')->nullable();
             $table->timestamps();
         });
     }
@@ -33,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('packages');
     }
 };
