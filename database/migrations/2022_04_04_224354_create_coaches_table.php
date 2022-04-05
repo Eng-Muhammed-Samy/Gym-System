@@ -13,15 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
+        
+        Schema::create('coaches', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('avatar_image')->default('default.jpg');
-            $table->string('password');
-            $table->enum('role', ['admin', 'gym_manager', 'city_manager', 'user'])->default('user');
-            $table->rememberToken();
+            // $table->decimal('salary',8,2);
             $table->timestamps();
         });
     }
@@ -33,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('coaches');
     }
 };
