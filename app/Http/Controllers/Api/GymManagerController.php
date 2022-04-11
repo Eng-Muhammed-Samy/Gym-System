@@ -42,7 +42,7 @@ class GymManagerController extends Controller
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
         }
-        return response()->json($GymManager, 201);
+        return response()->json(new UserResource($GymManager), 201);
     }
 
     function show($gym_manager_id)
@@ -51,7 +51,7 @@ class GymManagerController extends Controller
         if (!$GymManager) {
             return response()->json(['error' => 'Gym Manager not found'], 404);
         }
-        return response()->json($GymManager, 200);
+        return response()->json(new UserResource( $GymManager), 200);
     }
 
     function update(Request $request, $gym_manager_id)
@@ -59,7 +59,7 @@ class GymManagerController extends Controller
         try {
             $validatedRequest = $request->validate([
                 'name' => 'required',
-                'email' => 'required|email',
+                'email' => 'required|email|unique:users,email,$id,id',
                 'avatar_image' => 'image|mimes:jpeg,jpg|max:2048',
             ]);
             if (request()->avatar_image) {
@@ -76,7 +76,7 @@ class GymManagerController extends Controller
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 400);
         }
-        return response()->json($GymManager, 200);
+        return response()->json(new UserResource( $GymManager), 200);
     }
 
     function destroy($gym_manager_id)

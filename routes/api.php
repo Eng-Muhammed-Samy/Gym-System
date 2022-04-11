@@ -13,6 +13,12 @@ use App\Http\Controllers\Api\GymManagerController;
 use App\Http\Controllers\Api\AttendanceController;
 use App\Http\Controllers\Api\StripeController;
 use App\Http\Controllers\Api\BanController;
+use App\Http\Controllers\Api\CityMangerController;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
+
+use App\Http\Controllers\Api\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,11 +30,10 @@ use App\Http\Controllers\Api\BanController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-Auth::routes();
+Auth::routes(['register' => false]);
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
-
 // gym member routes
 Route::prefix('/gym-members')->group(function () {
     Route::get('/', [GymMembersController::class, 'index']);
@@ -39,6 +44,8 @@ Route::prefix('/gym-members')->group(function () {
 });
 //cityManager routes
 Route::resource('bans', BanController::class);
+Route::resource('users',UserController::class);
+Route::resource('citymanagers',CityMangerController::class);
 //Gym manager routes
 Route::resource('sessions', SessionController::class);
 Route::resource('coaches', CoachController::class);
@@ -55,3 +62,21 @@ Route::post('stripe/createInvoice', [StripeController::class, 'createInvoice'])-
 Route::post('stripe/createSubscription', [StripeController::class, 'createSubscription'])->name('stripe.subscription');
 Route::post('stripe/createPaymentMethod', [StripeController::class, 'createPaymentMethod'])->name('stripe.paymentMethod');
 
+
+Route::post('/sanctum/token', function (Request $request) {
+    $request->validate([
+        'email' => 'required|email',
+        'password' => 'required',
+        'device_name' => 'required',
+    ]);
+ 
+    $user = User::where('email', $request->email)->first();
+ 
+    if (! $user || ! Hash::check($request->password, $user->password)) {
+        throw ValidationException::withMessages([
+            'email' => ['The provided credentials are incorrect.'],
+        ]);
+    }
+ 
+    return $user->createToken($request->device_name)->plainTextToken;
+});

@@ -17,10 +17,17 @@ class GymFactory extends Factory
      */
     public function definition()
     {
-        $users=User::where('role','=','gym_manager')->pluck('id')->toArray();
+        $users_id=User::where('role','=','gym_manager')->pluck('id')->toArray();
+        if(!$users_id)
+        {
+            $user_id=User::factory()->create(['role'=>'gym_manager'])->id;
+        }else{
+            $user_id=$this->faker->randomElement($users_id);
+        }
+
         return [
             'name' => $this->faker->company,
-            'gym_manager_id' => $this->faker->randomElement($users),
+            'gym_manager_id' => $user_id,
             'city' => $this->faker->city,
         ];
     }

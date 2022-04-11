@@ -31,7 +31,7 @@ class TrainingSessionFactory extends Factory
         $gyms = Gym::all()->pluck('id')->toArray();
         $coaches = Coach::pluck('id')->toArray();
         return [
-            'name' => $this->faker->word,
+            'name' => $this->faker->unique()->word,
             'start_time' => $start_time,
             'end_time'=>$end_time,
             'session_date'=>$start_time,

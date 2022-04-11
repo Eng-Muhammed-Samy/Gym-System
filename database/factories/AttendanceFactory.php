@@ -19,10 +19,16 @@ class AttendanceFactory extends Factory
     public function definition()
     {
         $trainingSession=TrainingSession::all()->pluck('id')->toArray();
-        $users=User::where('role','=','user')->pluck('id')->toArray();
+        $users_id=User::where('role','=','user')->pluck('id')->toArray();
+        if(!$users_id){
+            $user_id=User::factory()->create(['role'=>'user'])->id;   
+        }
+        else{
+            $user_id=$this->faker->randomElement($users_id);
+        }
         return [
             'traning_session_id' => $this->faker->randomElement($trainingSession),
-            'user_id' => $this->faker->randomElement($users),
+            'user_id' => $user_id,
             'attendance_time' => $this->faker->time(),
             'attendance_date' => $this->faker->date(),    
         ];
