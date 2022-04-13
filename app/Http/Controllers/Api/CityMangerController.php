@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CityManagerResource\CityManagerResource;
 use App\Http\Resources\UserResource;
+use App\Models\CityManager;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -30,16 +32,18 @@ class CityMangerController extends Controller
     public function store(Request $request)
     {
         try {
-            // return "sdassaasdas";
             $validatedRequest = $request->validate([
                 'name' => 'required',
                 'email' => 'required|email|unique:users',
                 'password' => 'required|min:6|confirmed',
                 'avatar_image' => 'image|mimes:jpeg,jpg|max:2048',
+                'city_id' => 'required|exists:cities,id|unique:city_manager,city_id',
             ], $messages = [
                 'avatar_image.image' => 'this file must be image!',
                 'avatar_image.mimes' => 'image must be jpeg or jpg!',
                 'avatar_image.max' => 'image maxmum size is 2M!',
+                'city_id.exists' => 'this city not found!',
+                'city_id.unique' => 'this city already has a city manager!',
             ]);
             if ($request->file("avatar_image")) {
                 $filename = time() . '.' . $request->file("avatar_image")->getClientOriginalExtension();
@@ -47,17 +51,21 @@ class CityMangerController extends Controller
             } else
                 $filename = 'default.jpg';
 
-            $CityManager = User::create([
+            $User = User::create([
                 'name' => $validatedRequest['name'],
                 'email' => $validatedRequest['email'],
                 'password' => Hash::make($validatedRequest['password']),
                 'avatar_image' => $filename,
                 'role' => "city_manager",
             ]);
+            $CityManager=CityManager::create([
+                'user_id' => $User->id,
+                'city_id' => $validatedRequest['city_id'],
+            ]);
         } catch (\Exception $e) {
             return response()->json(["error"=>$e->getMessage()]);
         }
-        return response()->json(new UserResource($CityManager), 201);
+        return response()->json(new CityManagerResource($CityManager), 201);
     }
 
     /**

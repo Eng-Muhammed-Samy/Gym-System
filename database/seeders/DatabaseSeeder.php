@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Attendance;
 use App\Models\Ban;
+use App\Models\City;
 use App\Models\Coach;
 use App\Models\Gym;
 use App\Models\Package;
@@ -20,6 +21,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+        City::factory(10)->create();
         User::factory(30)->create();
         Coach::factory(10)->create();
         Gym::factory(10)->create();
