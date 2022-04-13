@@ -57,4 +57,8 @@ class User extends Authenticatable
     {
         return asset('avatars/'.$value);
     }
+    public function Ban()
+    {
+        return $this->hasOne(Ban::class);
+    }
 }

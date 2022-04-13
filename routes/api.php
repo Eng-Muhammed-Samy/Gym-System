@@ -12,7 +12,18 @@ use App\Http\Controllers\Api\PackageController;
 use App\Http\Controllers\Api\GymManagerController;
 use App\Http\Controllers\Api\AttendanceController;
 use App\Http\Controllers\Api\StripeController;
+use App\Http\Controllers\Api\BanController;
+<<<<<<< Updated upstream
+=======
+use App\Http\Controllers\Api\CityController;
+use App\Http\Controllers\Api\CityMangerController;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 
+use App\Http\Controllers\Api\UserController;
+use App\Models\City;
+>>>>>>> Stashed changes
 
 /*
 |--------------------------------------------------------------------------
@@ -37,7 +48,16 @@ Route::prefix('/gym-members')->group(function () {
     Route::delete('/{id}/delete', [GymMembersController::class, 'destroy']);
 
 });
-
+//cityManager routes
+Route::resource('bans', BanController::class);
+<<<<<<< Updated upstream
+=======
+Route::resource('users',UserController::class);
+Route::resource('citymanagers',CityMangerController::class)->except(['update']);
+Route::resource('cities',CityController::class)->except(['update']);
+Route::post('citymanagers/{id}/update',[CityMangerController::class,'update']);
+Route::post('cities/{id}/update',[CityController::class,'update']);
+>>>>>>> Stashed changes
 //Gym manager routes
 Route::resource('sessions', SessionController::class);
 Route::resource('coaches', CoachController::class);
