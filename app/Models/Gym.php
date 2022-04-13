@@ -11,23 +11,23 @@ class Gym extends Model
 
     protected $fillable = [
         'name',
-        // 'address',
-        'city',
-        // 'state',
-        // 'zip',
-        // 'phone',
-        // 'email',
-        // 'website',
-        // 'logo',
-        // 'description',
-        // 'user_id',
+        'city_id',
+        'city_manager_id',
     ];
 
-    // public function user()
-    // {
-    //     return $this->belongsTo(User::class);
-    // }
+    public function cityManager()
+    {
+        return $this->belongsTo(User::class);
+    }
 
+    public function city()
+    {
+        return $this->belongsTo(City::class);
+    }
+    public function gymManagers()
+    {
+        return $this->hasMany(GymManager::class);
+    }
     public function packages()
     {
         return $this->hasMany(Package::class);

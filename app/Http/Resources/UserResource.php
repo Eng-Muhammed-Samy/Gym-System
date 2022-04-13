@@ -18,10 +18,10 @@ class UserResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
-            'password' => $this->password,
+            'ban'=>$this->Ban,
             'avatar_image' => $this->avatar_image,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'created_at' => $this->created_at->format('Y-m-d'),
+            'updated_at' => $this->updated_at->format('Y-m-d'),
         ];
     }
 }
