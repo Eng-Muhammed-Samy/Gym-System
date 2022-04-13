@@ -13,11 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('gyms', function (Blueprint $table) {
+        Schema::create('city_manager', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
+            $table->foreignId('user_id')->references('id')->on('users');
             $table->foreignId('city_id')->references('id')->on('cities');
-            $table->foreignId('city_manager_id')->references('id')->on('city_manager');
             $table->timestamps();
         });
     }
@@ -29,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('gyms');
+        Schema::dropIfExists('city_manager');
     }
 };

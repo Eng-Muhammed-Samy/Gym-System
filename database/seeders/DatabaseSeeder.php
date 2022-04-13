@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        User::factory(10)->create();
+        User::factory(30)->create();
         Coach::factory(10)->create();
         Gym::factory(10)->create();
         Ban::factory(10)->create();

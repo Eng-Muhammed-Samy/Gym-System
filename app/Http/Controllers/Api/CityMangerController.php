@@ -30,22 +30,23 @@ class CityMangerController extends Controller
     public function store(Request $request)
     {
         try {
+            // return "sdassaasdas";
             $validatedRequest = $request->validate([
                 'name' => 'required',
                 'email' => 'required|email|unique:users',
                 'password' => 'required|min:6|confirmed',
                 'avatar_image' => 'image|mimes:jpeg,jpg|max:2048',
-            ],$messages = [
+            ], $messages = [
                 'avatar_image.image' => 'this file must be image!',
                 'avatar_image.mimes' => 'image must be jpeg or jpg!',
                 'avatar_image.max' => 'image maxmum size is 2M!',
-
             ]);
-            if (request()->avatar_image) {
-                $filename = time() . '.' . request()->avatar_image->getClientOriginalExtension();
-                request()->avatar_image->move(public_path('avatars'), $filename);
+            if ($request->file("avatar_image")) {
+                $filename = time() . '.' . $request->file("avatar_image")->getClientOriginalExtension();
+                $request->file("avatar_image")->move(public_path('avatars'), $filename);
             } else
                 $filename = 'default.jpg';
+
             $CityManager = User::create([
                 'name' => $validatedRequest['name'],
                 'email' => $validatedRequest['email'],
@@ -54,7 +55,7 @@ class CityMangerController extends Controller
                 'role' => "city_manager",
             ]);
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 400);
+            return response()->json(["error"=>$e->getMessage()]);
         }
         return response()->json(new UserResource($CityManager), 201);
     }
@@ -69,7 +70,7 @@ class CityMangerController extends Controller
     {
         $citymanager = User::find($id);
         if (!$citymanager) {
-            return response()->json(['error' => 'City Manager not found'], 404);
+            return response()->json(['error' => 'City Manager not found']);
         }
         return response()->json(new UserResource($citymanager), 200);
     }
@@ -82,31 +83,33 @@ class CityMangerController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $citymanager = User::find($id);
+        $citymanager = User::where('id',$id)->where('role', 'city_manager')->first();
         if ($citymanager) {
             try {
                 $validatedRequest = $request->validate([
                     'name' => 'required|string',
                     'email' => "required|email|unique:users,email,$id,id",
-                    'avatar_image' => 'image|mimes:jpeg,jpg|max:2048',
-                ],$messages=[
-                    'avatar_image.image' => 'this file must be image!',
-                    'avatar_image.mimes' => 'image must be jpeg or jpg!',
-                    'avatar_image.max' => 'image maxmum size is 2M!',
-                ]);
+                    // 'avatar_image' => 'image|mimes:jpeg,jpg|max:2048',
+                ]
+                // , $messages = [
+                //     'avatar_image.image' => 'this file must be image!',
+                //     'avatar_image.mimes' => 'image must be jpeg or jpg!',
+                //     'avatar_image.max' => 'image maxmum size is 2M!',
+                // ]
+            );
                 $citymanager->name = $validatedRequest['name'];
                 $citymanager->email = $validatedRequest['email'];
-                if (request()->avatar_image) {
-                    $filename = time() . '.' . request()->avatar_image->getClientOriginalExtension();
-                    request()->avatar_image->move(public_path('avatars'), $filename);
-                }
+                // if (request()->avatar_image) {
+                //     $filename =  time() . '.' . request()->avatar_image->getClientOriginalExtension();
+                //     request()->avatar_image->move(public_path('avatars'), $filename);
+                // }
                 $citymanager->save();
             } catch (\Exception $e) {
-                return response()->json(['error' => $e->getMessage()], 400);
+                return response()->json(['error' => $e->getMessage()]);
             }
-            return response()->json(new UserResource($citymanager), 200);
+            return response()->json(new UserResource($citymanager));
         }
-        return response()->json(['error' => 'City Manager not found'], 404);
+        return response()->json(['error' => 'City Manager not found']);
     }
     /**
      * Remove the specified resource from storage.

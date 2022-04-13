@@ -40,7 +40,7 @@ class GymManagerController extends Controller
                 'role' => "gym_manager",
             ]);
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 400);
+            return response()->json(['error' => $e->getMessage()]);
         }
         return response()->json(new UserResource($GymManager), 201);
     }
@@ -49,9 +49,9 @@ class GymManagerController extends Controller
     {
         $GymManager = User::find($gym_manager_id);
         if (!$GymManager) {
-            return response()->json(['error' => 'Gym Manager not found'], 404);
+            return response()->json(['error' => 'Gym Manager not found']);
         }
-        return response()->json(new UserResource( $GymManager), 200);
+        return response()->json(new UserResource( $GymManager));
     }
 
     function update(Request $request, $gym_manager_id)
@@ -60,35 +60,35 @@ class GymManagerController extends Controller
             $validatedRequest = $request->validate([
                 'name' => 'required',
                 'email' => 'required|email|unique:users,email,$id,id',
-                'avatar_image' => 'image|mimes:jpeg,jpg|max:2048',
+                // 'avatar_image' => 'image|mimes:jpeg,jpg|max:2048',
             ]);
-            if (request()->avatar_image) {
-                $filename = time() . '.' . request()->avatar_image->getClientOriginalExtension();
-                request()->avatar_image->move(public_path('avatars'), $filename);
-            }
+            // if (request()->avatar_image) {
+            //     $filename = time() . '.' . request()->avatar_image->getClientOriginalExtension();
+            //     request()->avatar_image->move(public_path('avatars'), $filename);
+            // }
             $GymManager = User::find($gym_manager_id);
             if (!$GymManager) {
-                return response()->json(['error' => 'Gym Manager not found'], 404);
+                return response()->json(['error' => 'Gym Manager not found']);
             }
             $GymManager->name = $validatedRequest['name'];
             $GymManager->email = $validatedRequest['email'];
             $GymManager->save();
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 400);
+            return response()->json(['error' => $e->getMessage()]);
         }
-        return response()->json(new UserResource( $GymManager), 200);
+        return response()->json(new UserResource( $GymManager));
     }
 
     function destroy($gym_manager_id)
     {
         $GymManager = User::find($gym_manager_id);
         if (!$GymManager) {
-            return response()->json(['error' => 'Gym Manager not found'], 404);
+            return response()->json(['error' => 'Gym Manager not found']);
         }
         try{
         $GymManager->delete();
         }catch(\Exception $e){
-            return response()->json(['error' => $e->getMessage()], 400);
+            return response()->json(['error' => $e->getMessage()]);
         }
         return response()->json("Successfully deleted", 204);
     }

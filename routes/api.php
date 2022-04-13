@@ -45,12 +45,14 @@ Route::prefix('/gym-members')->group(function () {
 //cityManager routes
 Route::resource('bans', BanController::class);
 Route::resource('users',UserController::class);
-Route::resource('citymanagers',CityMangerController::class);
+Route::resource('citymanagers',CityMangerController::class)->except(['update']);
+Route::post('citymanagers/{id}/update',[CityMangerController::class,'update']);
 //Gym manager routes
 Route::resource('sessions', SessionController::class);
 Route::resource('coaches', CoachController::class);
 Route::resource('packages', PackageController::class);
-Route::resource('gymmanagers', GymManagerController::class);
+Route::resource('gymmanagers', GymManagerController::class)->except(['update']);
+Route::post('gymmanagers/{id}/update',[GymManagerController::class,'update']);
 Route::resource('attendances', AttendanceController::class);
 
 //Payment gateway routes
