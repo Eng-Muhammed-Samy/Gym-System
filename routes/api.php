@@ -13,12 +13,14 @@ use App\Http\Controllers\Api\GymManagerController;
 use App\Http\Controllers\Api\AttendanceController;
 use App\Http\Controllers\Api\StripeController;
 use App\Http\Controllers\Api\BanController;
+use App\Http\Controllers\Api\CityController;
 use App\Http\Controllers\Api\CityMangerController;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
 use App\Http\Controllers\Api\UserController;
+use App\Models\City;
 
 /*
 |--------------------------------------------------------------------------
@@ -47,6 +49,11 @@ Route::resource('bans', BanController::class);
 Route::resource('users',UserController::class);
 Route::resource('citymanagers',CityMangerController::class)->except(['update']);
 Route::post('citymanagers/{id}/update',[CityMangerController::class,'update']);
+Route::resource('users',UserController::class);
+Route::resource('citymanagers',CityMangerController::class)->except(['update']);
+Route::resource('cities',CityController::class)->except(['update']);
+Route::post('citymanagers/{id}/update',[CityMangerController::class,'update']);
+Route::post('cities/{id}/update',[CityController::class,'update']);
 //Gym manager routes
 Route::resource('sessions', SessionController::class);
 Route::resource('coaches', CoachController::class);

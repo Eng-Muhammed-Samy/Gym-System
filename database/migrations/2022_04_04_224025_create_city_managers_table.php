@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('city_manager', function (Blueprint $table) {
+        Schema::create('city_managers', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->references('id')->on('users');
             $table->foreignId('city_id')->references('id')->on('cities');
@@ -28,6 +28,10 @@ return new class extends Migration
      */
     public function down()
     {
+<<<<<<< Updated upstream
         Schema::dropIfExists('city_manager');
+=======
+        Schema::dropIfExists('city_managers');
+>>>>>>> Stashed changes
     }
 };

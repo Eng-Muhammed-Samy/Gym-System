@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\City;
+use App\Models\CityManager;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -17,18 +19,19 @@ class GymFactory extends Factory
      */
     public function definition()
     {
-        $users_id=User::where('role','=','gym_manager')->pluck('id')->toArray();
-        if(!$users_id)
-        {
-            $user_id=User::factory()->create(['role'=>'gym_manager'])->id;
-        }else{
-            $user_id=$this->faker->randomElement($users_id);
+        $CityManager = $this->faker->randomElement(CityManager::all());
+        if (!$CityManager) {
+            $user = User::factory()->create(['role' => 'city_manager']);
+            $CityManager = CityManager::factory()->create([
+                    'user_id' => $user->id,
+                    'city_id' => City::factory()->create()->id
+                ]);
         }
-
+        logger($CityManager);
         return [
             'name' => $this->faker->company,
-            'gym_manager_id' => $user_id,
-            'city' => $this->faker->city,
+            'city_manager_id' => $CityManager['id'],
+            'city_id' => $CityManager['city_id'],
         ];
     }
 }
