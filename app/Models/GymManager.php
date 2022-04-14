@@ -8,7 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class GymManager extends Model
 {
     use HasFactory;
-    protected $fillable=['user_id','gym_id'];
+    protected $fillable=[
+        'user_id',
+        'gym_id'
+    ];
 
     public function user()
     {

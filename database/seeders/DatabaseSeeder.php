@@ -6,6 +6,7 @@ use App\Models\Attendance;
 use App\Models\Ban;
 use App\Models\City;
 use App\Models\Coach;
+use App\Models\CoachSession;
 use App\Models\Gym;
 use App\Models\Package;
 use App\Models\TrainingSession;
@@ -27,6 +28,7 @@ class DatabaseSeeder extends Seeder
         Gym::factory(10)->create();
         Ban::factory(10)->create();
         TrainingSession::factory(10)->create();
+        CoachSession::factory(10)->create();
         Package::factory(10)->create();
         Attendance::factory(10)->create();
     }

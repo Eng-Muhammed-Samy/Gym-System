@@ -21,16 +21,16 @@ class AttendanceFactory extends Factory
         $trainingSession=TrainingSession::all()->pluck('id')->toArray();
         $users_id=User::where('role','=','user')->pluck('id')->toArray();
         if(!$users_id){
-            $user_id=User::factory()->create(['role'=>'user'])->id;   
+            $user_id=User::factory()->create(['role'=>'user'])->id;
         }
         else{
             $user_id=$this->faker->randomElement($users_id);
         }
         return [
-            'traning_session_id' => $this->faker->randomElement($trainingSession),
+            'training_session_id' => $this->faker->randomElement($trainingSession),
             'user_id' => $user_id,
             'attendance_time' => $this->faker->time(),
-            'attendance_date' => $this->faker->date(),    
+            'attendance_date' => $this->faker->date(),
         ];
     }
 }

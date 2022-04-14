@@ -17,11 +17,10 @@ return new class extends Migration
             Schema::create('training_sessions', function (Blueprint $table) {
                 $table->id();
                 $table->string('name')->unique();
-                $table->dateTime('start_time');
-                $table->dateTime('end_time');
+                $table->time('start_time');
+                $table->time('end_time');
                 $table->date('session_date');
                 $table->foreignId('gym_id')->references('id')->on('gyms')->onDelete('cascade');
-                $table->foreignid('coach_id')->references('id')->on('coaches');
                 $table->timestamps();
             });
         }

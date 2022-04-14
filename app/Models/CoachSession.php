@@ -5,10 +5,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class CoachesSessions extends Model
+class CoachSession extends Model
 {
     use HasFactory;
-
+    protected $table = 'coach_session';
     protected $fillable = [
         'coach_id',
         'session_id',

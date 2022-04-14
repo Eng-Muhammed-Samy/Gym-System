@@ -13,14 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-       
-        Schema::create('coaches_sessions', function (Blueprint $table) {
+
+        Schema::create('coach_session', function (Blueprint $table) {
             $table->id();
             $table->foreignId('coach_id')->references('id')->on('coaches');
-            $table->foreignId('session_id')->references('id')->on('training_sessions');
+            $table->foreignId('session_id')->references('id')->on('training_sessions')->onDelete('cascade');
             $table->timestamps();
         });
-        
+
     }
 
     /**
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('coaches_sessions');
+        Schema::dropIfExists('coach_session');
     }
 };

@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\SessionController;
 use App\Http\Controllers\Api\CoachController;
 use App\Http\Controllers\Api\PackageController;
 use App\Http\Controllers\Api\GymManagerController;
+use App\Http\Controllers\Api\GymController;
 use App\Http\Controllers\Api\AttendanceController;
 use App\Http\Controllers\Api\StripeController;
 use App\Http\Controllers\Api\BanController;
@@ -36,6 +37,7 @@ Auth::routes(['register' => false]);
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
 // gym member routes
 Route::prefix('/gym-members')->group(function () {
     Route::get('/', [GymMembersController::class, 'index']);
@@ -49,18 +51,23 @@ Route::resource('bans', BanController::class);
 Route::resource('users',UserController::class);
 Route::resource('citymanagers',CityMangerController::class)->except(['update']);
 Route::post('citymanagers/{id}/update',[CityMangerController::class,'update']);
-Route::resource('users',UserController::class);
-Route::resource('citymanagers',CityMangerController::class)->except(['update']);
 Route::resource('cities',CityController::class)->except(['update']);
 Route::post('citymanagers/{id}/update',[CityMangerController::class,'update']);
 Route::post('cities/{id}/update',[CityController::class,'update']);
+
 //Gym manager routes
 Route::resource('sessions', SessionController::class);
+Route::post('sessions/{id}/update',[SessionController::class,'update']);
 Route::resource('coaches', CoachController::class);
+Route::post('coaches/{id}/update',[CoachController::class,'update']);
 Route::resource('packages', PackageController::class);
 Route::resource('gymmanagers', GymManagerController::class)->except(['update']);
 Route::post('gymmanagers/{id}/update',[GymManagerController::class,'update']);
 Route::resource('attendances', AttendanceController::class);
+
+//Gym Route
+Route::resource('gyms', GymController::class);
+Route::post('gyms/{id}/update',[GymController::class,'update']);
 
 //Payment gateway routes
 Route::post('stripe', [StripeController::class, 'stripePost'])->name('stripe.post');
@@ -78,14 +85,14 @@ Route::post('/sanctum/token', function (Request $request) {
         'password' => 'required',
         'device_name' => 'required',
     ]);
- 
+
     $user = User::where('email', $request->email)->first();
- 
+
     if (! $user || ! Hash::check($request->password, $user->password)) {
         throw ValidationException::withMessages([
             'email' => ['The provided credentials are incorrect.'],
         ]);
     }
- 
+
     return $user->createToken($request->device_name)->plainTextToken;
 });
