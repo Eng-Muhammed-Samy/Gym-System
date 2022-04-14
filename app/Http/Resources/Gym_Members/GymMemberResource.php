@@ -17,13 +17,14 @@ class GymMemberResource extends JsonResource
     {
         return [
 
-            'user_id' => $this->user_id,
+            'id' => $this->user->id,
+            'name' => $this->user->name,
+            'email' => $this->user->email,
             'gender' => $this->gender,
             'date_of_birth' => $this->date_of_birth,
-            'last_login' => $this->last_login,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'user' => new UserResource($this->user),
+            'avatar_image' => $this->user->avatar_image,
+            'created_at' => $this->created_at->format('Y-m-d'),
+            'updated_at' => $this->updated_at->format('Y-m-d'),
 
         ];
     }

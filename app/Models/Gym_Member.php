@@ -13,7 +13,6 @@ class Gym_Member extends Model
         'gender',
         'date_of_birth',
     ];
-    protected $primaryKey = 'user_id';
 
     public function user() 
     {
