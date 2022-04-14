@@ -28,10 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-<<<<<<< Updated upstream
-        Schema::dropIfExists('city_manager');
-=======
         Schema::dropIfExists('city_managers');
->>>>>>> Stashed changes
     }
 };

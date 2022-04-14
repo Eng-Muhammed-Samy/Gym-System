@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('name')->unique();
             $table->foreignId('city_id')->references('id')->on('cities');
-            $table->foreignId('city_manager_id')->references('id')->on('city_manager');
+            $table->foreignId('city_manager_id')->references('id')->on('city_managers');
 
             $table->timestamps();
         });

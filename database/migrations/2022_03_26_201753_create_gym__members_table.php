@@ -14,8 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::create('gym__members', function (Blueprint $table) {
-            $table->unsignedBigInteger('user_id')->primary();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->id();
+            $table->foreignId('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->enum('gender', ['male', 'female']);
             $table->date('date_of_birth');
             $table->timestamp('last_login')->nullable();
