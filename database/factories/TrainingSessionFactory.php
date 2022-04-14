@@ -29,14 +29,12 @@ class TrainingSessionFactory extends Factory
         $start_time=$this->faker->dateTimeBetween('-1 Day', '+1 Day');
         $end_time=$this->faker->dateTimeInInterval($start_time, '+3 Hours');
         $gyms = Gym::all()->pluck('id')->toArray();
-        $coaches = Coach::pluck('id')->toArray();
         return [
             'name' => $this->faker->unique()->word,
             'start_time' => $start_time,
             'end_time'=>$end_time,
             'session_date'=>$start_time,
             'gym_id'=>$this->faker->randomElement($gyms),
-            'coach_id'=>$this->faker->randomElement($coaches),
         ];
     }
 }

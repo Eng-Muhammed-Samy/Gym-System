@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Attendance;
+use App\Models\CoachSession;
 use App\Models\TrainingSession;
 use Illuminate\Http\Request;
 use App\Models\User;
@@ -17,13 +18,6 @@ class SessionController extends Controller
 
     public function store(Request $request)
     {
-        $sessionOverlaps = TrainingSession::where('gym_id','=',$request->gym_id)->where('session_date','=',$request->session_date)
-        ->where('start_time', '<=', $request->start_time)->where('end_time', '>=', $request->end_time)
-        ->get();
-
-        if (count($sessionOverlaps) > 0) {
-            return response()->json(['error' => 'Session overlaps with another session'], 400);
-        }
         try{
         $validatedRequest=$request->validate([
             'name' => 'required|unique:training_sessions',
@@ -31,16 +25,27 @@ class SessionController extends Controller
             'end_time' => 'required',
             'session_date' => 'required',
             'gym_id' => 'required',
+            'coaches' => 'required|array|min:1',
         ]);
-        $session = TrainingSession::create([
+        $session = new TrainingSession([
             'name' => $validatedRequest['name'],
             'start_time' => $validatedRequest['start_time'],
             'end_time' => $validatedRequest['end_time'],
             'session_date' => $validatedRequest['session_date'],
             'gym_id' => $validatedRequest['gym_id'],
         ]);
+        if ($session->getOverlabingSessions()->count() > 0) {
+            return response()->json(['error' => 'Session overlaps with another session']);
+        }
+        $session = TrainingSession::create($session->toArray());
+        foreach ($validatedRequest['coaches'] as $coach) {
+            CoachSession::create([
+                'session_id' => $session->id,
+                'coach_id' => $coach,
+            ]);
+        }
         }catch(\Exception $e){
-            return response()->json(['error'=>$e->getMessage()],400);
+            return response()->json(['error'=>$e->getMessage()]);
         }
         return response()->json($session, 201);
     }
@@ -64,18 +69,20 @@ class SessionController extends Controller
         ]);
         $session = TrainingSession::find($session_id);
         if(!$session){
-            return response()->json(['error'=>'Session not found'],404);
+            return response()->json(['error'=>'Session not found']);
         }
-        $userAttending = Attendance::where('training_session_id','=',$session_id)->get();
-        if($userAttending->count()>0){
-            return response()->json(['error'=>'Session is currently in use'],400);
+        if($session->getOverlabingSessions()){
+            return response()->json(['error'=>'Session overlaps with another session']);
+        }
+        if($session->attendance->count()>0){
+            return response()->json(['error'=>'Session is currently in use']);
         }
         $session->start_time = $validatedRequest['start_time'];
         $session->end_time = $validatedRequest['end_time'];
         $session->session_date = $validatedRequest['session_date'];
         $session->save();
         }catch(\Exception $e){
-            return response()->json(['error'=>$e->getMessage()],400);
+            return response()->json(['error'=>$e->getMessage()]);
         }
         return response()->json($session, 201);
     }
@@ -84,16 +91,15 @@ class SessionController extends Controller
     {
         $session = TrainingSession::find($session_id);
         if(!$session){
-            return response()->json(['error'=>'Session not found'],404);
+            return response()->json(['error'=>'Session not found']);
         }
-        $userAttending = Attendance::where('training_session_id','=',$session_id)->get();
-        if($userAttending->count()>0){
-            return response()->json(['error'=>'Session is currently in use'],400);
+        if($session->attendance->count()>0){
+            return response()->json(['error'=>'Session is currently in use']);
         }
         try{
             $session->delete();
         }catch(\Exception $e){
-            return response()->json(['error'=>$e->getMessage()],400);
+            return response()->json(['error'=>$e->getMessage()]);
         }
         return response()->json("Sucessfully deleted", 204);
     }

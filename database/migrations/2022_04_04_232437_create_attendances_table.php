@@ -15,13 +15,13 @@ return new class extends Migration
     {
         Schema::create('attendances', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('traning_session_id')->references('id')->on('training_sessions');
+            $table->foreignId('training_session_id')->references('id')->on('training_sessions');
             $table->foreignId('user_id')->references('id')->on('users');
             $table->time('attendance_time');
             $table->date('attendance_date');
             $table->timestamps();
         });
-        
+
     }
 
     /**
