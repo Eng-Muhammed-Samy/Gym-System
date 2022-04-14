@@ -9,6 +9,8 @@ use App\Models\TrainingSession;
 use Illuminate\Http\Request;
 use App\Models\User;
 
+use function PHPUnit\Framework\isEmpty;
+
 class SessionController extends Controller
 {
     public function index()
@@ -65,13 +67,13 @@ class SessionController extends Controller
         $validatedRequest=$request->validate([
             'start_time' => 'required',
             'end_time' => 'required',
-            'session_date' => 'required',
+            'session_date' => 'required|after:today',
         ]);
         $session = TrainingSession::find($session_id);
         if(!$session){
             return response()->json(['error'=>'Session not found']);
         }
-        if($session->getOverlabingSessions()){
+        if($session->getOverlabingSessions()->count() > 0){
             return response()->json(['error'=>'Session overlaps with another session']);
         }
         if($session->attendance->count()>0){
