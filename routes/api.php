@@ -62,6 +62,7 @@ Route::post('sessions/{id}/update',[SessionController::class,'update']);
 Route::resource('coaches', CoachController::class);
 Route::post('coaches/{id}/update',[CoachController::class,'update']);
 Route::resource('packages', PackageController::class);
+Route::post('packages/{id}/update',[CoachController::class,'update']);
 Route::resource('gymmanagers', GymManagerController::class)->except(['update']);
 Route::post('gymmanagers/{id}/update',[GymManagerController::class,'update']);
 Route::resource('attendances', AttendanceController::class);
