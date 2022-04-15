@@ -20,11 +20,15 @@ class PackageController extends Controller
             'name' => 'required|unique:packages',
             'price' => 'required|numeric',
             'gym_id' => 'required|exists:gyms,id',
+            'session_count' => 'required|numeric',
+            'discount' => 'nullable|numeric|min:0|max:100',
         ]);
         $package = Package::create([
             'name' => $validatedRequest['name'],
             'price' => $validatedRequest['price'],
             'gym_id' => $validatedRequest['gym_id'],
+            'session_count' => $validatedRequest['session_count'],
+            'discount' => $validatedRequest['discount'],
         ]);
         }catch(\Exception $e){
             return response()->json(['error'=>$e->getMessage()],400);
@@ -48,6 +52,8 @@ class PackageController extends Controller
             'name' => 'required|unique:packages,name',
             'price' => 'required|numeric',
             'gym_id' => 'required|exists:gyms,id',
+            'session_count' => 'required|numeric',
+            'discount' => 'nullable|numeric|min:0|max:100',
         ]);
         $package = Package::find($package_id);
         if(!$package){
@@ -56,6 +62,8 @@ class PackageController extends Controller
         $package->name = $validatedRequest['name'];
         $package->price = $validatedRequest['price'];
         $package->gym_idgym_id = $validatedRequest['gym_id'];
+        $package->session_count = $validatedRequest['session_count'];
+        $package->discount = $validatedRequest['discount'];
         $package->save();
         }catch(\Exception $e){
             return response()->json(['error'=>$e->getMessage()],400);
