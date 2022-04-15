@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Attendance;
 use App\Models\Ban;
 use App\Models\City;
+use App\Models\CityManager;
 use App\Models\Coach;
 use App\Models\CoachSession;
 use App\Models\Gym;
@@ -22,8 +23,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        City::factory(10)->create();
         User::factory(30)->create();
+        CityManager::factory(User::where("role","city_manager")->count())->create();
+        City::factory(10)->create();
+        City::factory(10)->create(['city_manager_id' => null]);
         Coach::factory(10)->create();
         Gym::factory(10)->create();
         Ban::factory(10)->create();

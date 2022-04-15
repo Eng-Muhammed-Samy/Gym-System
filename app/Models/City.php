@@ -10,11 +10,12 @@ class City extends Model
     use HasFactory;
     protected $fillable=[
         'name',
+        'city_manager_id',
     ];
 
     public function city_manager()
     {
-        return $this->hasMany(CityManager::class);
+        return $this->belongsTo(CityManager::class);
     }
 
     public function gyms()

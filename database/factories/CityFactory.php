@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\CityManager;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,8 +17,10 @@ class CityFactory extends Factory
      */
     public function definition()
     {
+        $managers_id=CityManager::all()->pluck('id')->toArray();
         return [
             "name" => $this->faker->unique()->city,
+            'city_manager_id' => $managers_id ? $this->faker->randomElement($managers_id) : CityManager::factory()->create()->id,
         ];
     }
 }

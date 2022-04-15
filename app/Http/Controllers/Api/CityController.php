@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\City;
+use App\Models\CityManager;
 use Illuminate\Http\Request;
 
 class CityController extends Controller
@@ -16,6 +17,16 @@ class CityController extends Controller
     public function index()
     {
         return City::all();
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function withoutManager()
+    {
+        return City::where('city_manager_id', null)->get();
     }
 
     /**
@@ -70,7 +81,7 @@ class CityController extends Controller
                 $request->validate([
                     'name' => 'required|unique:cities,name,' . $City->id,
                 ]);
-                $City->name=$request->name;
+                $City->name = $request->name;
                 $City->save();
                 return response()->json($City, 200);
             } catch (\Exception $e) {
@@ -92,7 +103,7 @@ class CityController extends Controller
         if ($City) {
             $City->delete();
             return response('Deleted Successfully', 204);
-        }else{
+        } else {
             return response()->json(["error" => "can't found this city"]);
         }
     }
