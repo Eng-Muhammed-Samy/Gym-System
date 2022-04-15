@@ -64,7 +64,11 @@ Route::post('coaches/{id}/update',[CoachController::class,'update']);
 Route::resource('packages', PackageController::class);
 Route::resource('gymmanagers', GymManagerController::class)->except(['update']);
 Route::post('gymmanagers/{id}/update',[GymManagerController::class,'update']);
+
+
+//Attendances routes
 Route::resource('attendances', AttendanceController::class);
+Route::get('attendancesformat', [AttendanceController::class,'AttendanceFormat']);
 
 //Gym Route
 Route::resource('gyms', GymController::class);
