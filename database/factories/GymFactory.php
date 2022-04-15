@@ -24,14 +24,14 @@ class GymFactory extends Factory
             $user = User::factory()->create(['role' => 'city_manager']);
             $CityManager = CityManager::factory()->create([
                     'user_id' => $user->id,
-                    'city_id' => City::factory()->create()->id
+                    // 'city_id' => City::factory()->create()->id
                 ]);
         }
         logger($CityManager);
         return [
             'name' => $this->faker->company,
             'city_manager_id' => $CityManager['id'],
-            'city_id' => $CityManager['city_id'],
+            'city_id' => $this->faker->randomElement(City::all())->id,
         ];
     }
 }

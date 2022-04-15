@@ -51,6 +51,7 @@ Route::resource('bans', BanController::class);
 Route::resource('users',UserController::class);
 Route::resource('citymanagers',CityMangerController::class)->except(['update']);
 Route::post('citymanagers/{id}/update',[CityMangerController::class,'update']);
+Route::get('cities-without-manager',[CityController::class,'withoutManager']);
 Route::resource('cities',CityController::class)->except(['update']);
 Route::post('citymanagers/{id}/update',[CityMangerController::class,'update']);
 Route::post('cities/{id}/update',[CityController::class,'update']);

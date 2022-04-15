@@ -19,10 +19,9 @@ class CityManagerFactory extends Factory
     public function definition()
     {
         $users_id=User::where('role','=','city_manager')->pluck('id')->toArray();
-        $cities_id=City::all()->pluck('id')->toArray();
         return [
-            'user_id' => $users_id ? $this->faker->randomElement($users_id) : User::factory()->create(['role'=>'city_manager'])->id,
-            'city_id' => $cities_id ? $this->faker->randomElement($users_id) : User::factory()->create(['role'=>'city_manager'])->id,
+            'user_id' => $users_id ? $this->faker->unique()->randomElement($users_id) : User::factory()->create(['role'=>'city_manager'])->id,
+            // 'city_id' => $cities_id ? $this->faker->randomElement($users_id) : User::factory()->create(['role'=>'city_manager'])->id,
         ];
     }
 }

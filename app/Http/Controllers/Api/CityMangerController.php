@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CityManagerResource\CityManagerResource;
 use App\Http\Resources\UserResource;
+use App\Models\City;
 use App\Models\CityManager;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class CityMangerController extends Controller
 {
@@ -31,20 +33,28 @@ class CityMangerController extends Controller
      */
     public function store(Request $request)
     {
+        logger($request->city_id);
         try {
-            $validatedRequest = $request->validate([
-                'name' => 'required',
+            $validatedRequest = Validator::make(
+                $request->all(),
+                ['name' => 'required',
                 'email' => 'required|email|unique:users',
                 'password' => 'required|min:6|confirmed',
-                'avatar_image' => 'image|mimes:jpeg,jpg|max:2048',
-                'city_id' => 'required|exists:cities,id|unique:city_manager,city_id',
-            ], $messages = [
+                'avatar_image' => 'nullable|image|mimes:jpeg,jpg|max:2048',
+                'city_id' => 'required|exists:cities,id,city_manager_id,NULL'],
+                [
                 'avatar_image.image' => 'this file must be image!',
                 'avatar_image.mimes' => 'image must be jpeg or jpg!',
                 'avatar_image.max' => 'image maxmum size is 2M!',
+                'city_id.required' => 'city is required!',
                 'city_id.exists' => 'this city not found!',
-                'city_id.unique' => 'this city already has a city manager!',
-            ]);
+                'city_id' => 'this city already has a city manager!',
+                ]
+            );
+            if($validatedRequest->fails()){
+                logger("fails()");
+                return response()->json(['status' => 'error', 'errors' => $validatedRequest->errors()]);
+            }
             if ($request->file("avatar_image")) {
                 $filename = time() . '.' . $request->file("avatar_image")->getClientOriginalExtension();
                 $request->file("avatar_image")->move(public_path('avatars'), $filename);
@@ -52,18 +62,21 @@ class CityMangerController extends Controller
                 $filename = 'default.jpg';
 
             $User = User::create([
-                'name' => $validatedRequest['name'],
-                'email' => $validatedRequest['email'],
-                'password' => Hash::make($validatedRequest['password']),
+                'name' => $request['name'],
+                'email' => $request['email'],
+                'password' => Hash::make($request['password']),
                 'avatar_image' => $filename,
                 'role' => "city_manager",
             ]);
             $CityManager=CityManager::create([
                 'user_id' => $User->id,
-                'city_id' => $validatedRequest['city_id'],
+                // 'city_id' => $request['city_id'],
             ]);
+            City::find($request['city_id'])->update(['city_manager_id' => $CityManager->id]);
         } catch (\Exception $e) {
-            return response()->json(["error"=>$e->getMessage()]);
+            logger("e");
+            return response()->json(['status' => 'error', 'errors' => $e,'error' => $validatedRequest->errors()]);
+
         }
         return response()->json(new CityManagerResource($CityManager), 201);
     }

@@ -8,20 +8,21 @@ use Illuminate\Database\Eloquent\Model;
 class CityManager extends Model
 {
     use HasFactory;
+    // protected $table = 'city_managers'; 
     protected $fillable=['user_id','city_id'];
 
     public function user()
     {
-        return $this->belongsTo('App\User');
+        return $this->belongsTo(User::class);
     }
 
     public function city()
     {
-        return $this->belongsTo('App\Models\City');
+        return $this->hasOne(City::class);
     }
 
     public function gyms()
     {
-        return $this->hasMany('App\Models\Gym');
+        return $this->hasMany(Gym::class);
     }
 }
