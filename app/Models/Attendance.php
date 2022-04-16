@@ -25,4 +25,16 @@ class Attendance extends Model
     {
         return $this->belongsTo(TrainingSession::class);
     }
+
+    public function getUserNameAttribute()
+    {
+        return $this->user->name;
+    }
+
+    public function getSessionNameAttribute()
+    {
+        return $this->training_session->name;
+    }
 }
+
+
