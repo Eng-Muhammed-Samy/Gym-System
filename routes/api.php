@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\StripeController;
 use App\Http\Controllers\Api\BanController;
 use App\Http\Controllers\Api\CityController;
 use App\Http\Controllers\Api\CityMangerController;
+use App\Http\Controllers\Api\StripeOperationController;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
@@ -67,8 +68,12 @@ Route::resource('gymmanagers', GymManagerController::class)->except(['update']);
 Route::post('gymmanagers/{id}/update',[GymManagerController::class,'update']);
 
 
+//StripeOperation routes
+Route::resource('stripe/operation',StripeOperationController::class)->except(['update']);
+Route::get('stripe/operation/{id}/update',[StripeOperationController::class,'update']);
+
 //Attendances routes
-Route::resource('attendances', AttendanceController::class);
+Route::resource('attendances', AttendanceController::class)->except(['update']);;
 Route::get('attendancesformat', [AttendanceController::class,'AttendanceFormat']);
 
 //Gym Route
@@ -76,7 +81,7 @@ Route::resource('gyms', GymController::class);
 Route::post('gyms/{id}/update',[GymController::class,'update']);
 
 //Payment gateway routes
-Route::post('stripe', [StripeController::class, 'stripePost'])->name('stripe.post');
+Route::post('stripe/token', [StripeController::class, 'stripePost'])->name('stripe.post');
 Route::post('stripe/customer', [StripeController::class, 'createCustomer'])->name('stripe.customer');
 Route::post('stripe/charge', [StripeController::class, 'createCharge'])->name('stripe.charge');
 Route::post('stripe/createRefund', [StripeController::class, 'createRefund'])->name('stripe.refund');
