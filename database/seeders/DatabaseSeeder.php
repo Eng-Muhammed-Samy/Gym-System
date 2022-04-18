@@ -9,6 +9,7 @@ use App\Models\CityManager;
 use App\Models\Coach;
 use App\Models\CoachSession;
 use App\Models\Gym;
+use App\Models\Gym_Member;
 use App\Models\Package;
 use App\Models\TrainingSession;
 use App\Models\User;
@@ -24,6 +25,7 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         User::factory(30)->create();
+        Gym_Member::factory(User::where("role","user")->count())->create();
         CityManager::factory(User::where("role","city_manager")->count())->create();
         City::factory(10)->create();
         City::factory(10)->create(['city_manager_id' => null]);
