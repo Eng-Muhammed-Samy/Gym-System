@@ -30,7 +30,7 @@ class GymFactory extends Factory
         logger($CityManager);
         return [
             'name' => $this->faker->company,
-            'city_manager_id' => $CityManager['id'],
+            // 'city_manager_id' => $CityManager['id'],
             'city_id' => $this->faker->randomElement(City::all())->id,
         ];
     }

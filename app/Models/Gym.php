@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class Gym extends Model
 {
     use HasFactory;
-
     protected $fillable = [
         'name',
         'city_id',
@@ -38,3 +37,4 @@ class Gym extends Model
         return $this->hasMany(TrainingSession::class);
     }
 }
+    

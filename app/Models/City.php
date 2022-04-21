@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Resources\CityManagerResource\CityManagerResource;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -13,19 +14,22 @@ class City extends Model
         'city_manager_id',
     ];
 
-    public function city_manager()
+    public function cityManager()
     {
         return $this->belongsTo(CityManager::class);
     }
-
     public function gyms()
     {
         return $this->hasMany(Gym::class);
     }
     public function toArray(){
-        $array = parent::toArray();
-        $array['city_manager'] = $this->city_manager;
-        $array['gyms'] = $this->gyms;
-        return $array;
+        return ['id' => $this->id,
+        'name' => $this->name,
+        'city_manager' =>$this->cityManager?$this->cityManager->user:null,
+        'gyms' => $this->gyms,
+        'created_at' => $this->created_at->format('Y-m-d'),
+        'updated_at' => $this->updated_at->format('Y-m-d'),
+    ];
+        
     }
 }

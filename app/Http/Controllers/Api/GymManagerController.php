@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
+use App\Models\GymManager;
 use App\Models\User;
 use Google\Service\ShoppingContent\Collection;
 use Illuminate\Http\Request;
@@ -16,7 +17,11 @@ class GymManagerController extends Controller
         $GymManagers = User::where('role', 'gym_manager')->get();
         return response()->json(UserResource::Collection($GymManagers), 200);
     }
-
+    public function withoutGyms()
+    {
+        $GymManagers=GymManager::where('gym_id', null)->get();
+        return response()->json($GymManagers, 200);
+    }
     function store(Request $request)
     {
         try {

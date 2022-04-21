@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('gym_managers', function (Blueprint $table) {
             $table->id();
-            $table->foreignId("user_id")->references('id')->on('users');
-            $table->foreignId("gym_id")->references('id')->on('gyms');
+            $table->foreignId("user_id")->unique()->references('id')->on('users')->onDelete('cascade');
+            $table->foreignId("gym_id")->nullable()->references('id')->on('gyms');
             $table->timestamps();
         });
     }
