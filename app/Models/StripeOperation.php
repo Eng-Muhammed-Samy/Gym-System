@@ -18,7 +18,7 @@ class StripeOperation extends Model
 
     public function gymmember()
     {
-        return $this->belongsTo(User::class)->where('role', '=', 'gym_member');
+        return $this->belongsTo(User::class,"gym_member_id");
     }
 
     public function package()
@@ -29,6 +29,11 @@ class StripeOperation extends Model
     public function gym()
     {
         return $this->belongsTo(Gym::class);
+    }
+
+    public function getPaidAmountAttribute($value)
+    {
+        return $value."$";
     }
 
 }
