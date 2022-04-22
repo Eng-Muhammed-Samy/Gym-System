@@ -72,6 +72,7 @@ Route::post('gymmanagers/{id}/update',[GymManagerController::class,'update']);
 //StripeOperation routes
 Route::resource('stripe/operation',StripeOperationController::class)->except(['update']);
 Route::get('stripe/operation/{id}/update',[StripeOperationController::class,'update']);
+Route::get('stripe/operationformat',[StripeOperationController::class,'stripeFormat']);
 
 //Attendances routes
 Route::resource('attendances', AttendanceController::class)->except(['update']);;

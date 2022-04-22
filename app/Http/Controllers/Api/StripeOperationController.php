@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Stripe\StripeOperationResource;
 use Illuminate\Http\Request;
 use App\Models\StripeOperation;
 
@@ -16,6 +17,11 @@ class StripeOperationController extends Controller
     public function index()
     {
         return StripeOperation::all();
+    }
+
+    public function stripeFormat()
+    {
+        return StripeOperationResource::collection(StripeOperation::all()) ; 
     }
 
     /**
@@ -107,4 +113,5 @@ class StripeOperationController extends Controller
         $stripeOperation->delete();
         return response()->json('Transaction deleted successfully', 200);
     }
+
 }
