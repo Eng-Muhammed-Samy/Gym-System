@@ -129,15 +129,18 @@ class CityMangerController extends Controller
     public function destroy($id)
     {
         logger(`user id is $id`);
-        $citymanager = CityManager::where('user_id',$id);
+        $citymanager = CityManager::where('user_id',$id)->first();
         $User =$citymanager->user;
+        // logger($User);
         if ($citymanager && $User) {
             try {
-                if($citymanager->city)
+                if($citymanager->city){
                     $citymanager->city->update(['city_manager_id' => null]);
+                    $citymanager->city->save();
+                }
                 $citymanager->delete();
-                if($User->avatar_image != 'default.jpg')
-                    unlink(public_path('avatars/'.$User->avatar_image));
+                // if($User->avatar_image != 'default.jpg')
+                //     unlink(public_path('avatars/'.$User->avatar_image));
                 $User->delete();
                 return response()->json(['status'=>'sucsess','message' => 'City Manager deleted successfully']);
             } catch (\Exception $e) {

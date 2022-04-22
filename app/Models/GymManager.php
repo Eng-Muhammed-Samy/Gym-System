@@ -32,6 +32,7 @@ class GymManager extends Model
             'email' => $this->user->email,
             'avatar_image' => $this->user->avatar_image,
             'gym' => $this->gym,
+            'ban'=> $this->user->ban,
             'created_at' => $this->user->created_at->format('Y-m-d'),
             'updated_at' => $this->user->updated_at->format('Y-m-d'),
         ];

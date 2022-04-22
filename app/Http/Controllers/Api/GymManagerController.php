@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use App\Models\GymManager;
 use App\Models\User;
-use Google\Service\ShoppingContent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -14,12 +13,12 @@ class GymManagerController extends Controller
 {
     function index()
     {
-        $GymManagers = User::where('role', 'gym_manager')->get();
-        return response()->json(UserResource::Collection($GymManagers), 200);
+        $GymManagers = GymManager::all();
+        return response()->json($GymManagers, 200);
     }
     public function withoutGyms()
     {
-        $GymManagers=GymManager::where('gym_id', null)->get();
+        $GymManagers = GymManager::where('gym_id', null)->get();
         return response()->json($GymManagers, 200);
     }
     function store(Request $request)
@@ -56,7 +55,7 @@ class GymManagerController extends Controller
         if (!$GymManager) {
             return response()->json(['error' => 'Gym Manager not found']);
         }
-        return response()->json(new UserResource( $GymManager));
+        return response()->json(new UserResource($GymManager));
     }
 
     function update(Request $request, $gym_manager_id)
@@ -81,20 +80,23 @@ class GymManagerController extends Controller
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()]);
         }
-        return response()->json(new UserResource( $GymManager));
+        return response()->json(new UserResource($GymManager));
     }
 
     function destroy($gym_manager_id)
     {
-        $GymManager = User::find($gym_manager_id);
-        if (!$GymManager) {
-            return response()->json(['error' => 'Gym Manager not found']);
+        $GymManager = GymManager::find($gym_manager_id);
+        if ($GymManager) {
+            try {
+                if ($GymManager->gym_id)
+                return response()->json(['status' => 'error', 'error' => 'Gym Manager is assigned to a gym']);
+                $GymManager->user->delete();
+                $GymManager->delete();
+                return response()->json(['status' => "success", 'message' => 'Gym Manager deleted successfully']);
+            } catch (\Exception $e) {
+                return response()->json(['status' => "error", 'error' => $e->getMessage()]);
+            }
         }
-        try{
-        $GymManager->delete();
-        }catch(\Exception $e){
-            return response()->json(['error' => $e->getMessage()]);
-        }
-        return response()->json("Successfully deleted", 204);
+        return response()->json(['status' => 'error', 'error' => 'Gym Manager not found']);
     }
 }
