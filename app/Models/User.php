@@ -61,4 +61,15 @@ class User extends Authenticatable
     {
         return $this->hasOne(Ban::class);
     }
+    public function getRole()
+    {
+        if($this->role == 'city_manager')
+            return $this->hasOne(CityManager::class, 'user_id');
+        elseif($this->role == 'gym_manager')
+            return $this->hasOne(GymManager::class, 'user_id');
+        elseif($this->role == 'gym_member')
+            return $this->hasOne(Gym_Member::class, 'user_id');
+        else
+            return null;       
+    }
 }

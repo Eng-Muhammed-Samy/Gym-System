@@ -49,7 +49,7 @@ Route::prefix('/gym-members')->group(function () {
 });
 //cityManager routes
 Route::resource('bans', BanController::class);
-Route::resource('users',UserController::class);
+// Route::resource('users',UserController::class);
 Route::resource('citymanagers',CityMangerController::class)->except(['update']);
 Route::post('citymanagers/{id}/update',[CityMangerController::class,'update']);
 Route::get('cities-without-manager',[CityController::class,'withoutManager']);
@@ -65,6 +65,7 @@ Route::post('coaches/{id}/update',[CoachController::class,'update']);
 Route::resource('packages', PackageController::class);
 Route::post('packages/{id}/update',[CoachController::class,'update']);
 Route::resource('gymmanagers', GymManagerController::class)->except(['update']);
+Route::get('gymmanagers-withoutGyms', [GymManagerController::class,'withoutGyms']);
 Route::post('gymmanagers/{id}/update',[GymManagerController::class,'update']);
 
 
@@ -79,6 +80,8 @@ Route::get('attendancesformat', [AttendanceController::class,'AttendanceFormat']
 //Gym Route
 Route::resource('gyms', GymController::class);
 Route::post('gyms/{id}/update',[GymController::class,'update']);
+Route::post('gym-remove-manager',[GymController::class,'removeManager']);
+Route::post('gym-add-manager',[GymController::class,'addManager']);
 
 //Payment gateway routes
 Route::post('stripe/token', [StripeController::class, 'stripePost'])->name('stripe.post');
