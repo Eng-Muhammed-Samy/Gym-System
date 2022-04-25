@@ -13,10 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('gym_managers', function (Blueprint $table) {
+        Schema::create('stripe_operations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId("user_id")->unique()->references('id')->on('users')->onDelete('cascade');
-            $table->foreignId("gym_id")->nullable()->references('id')->on('gyms');
+            $table->foreignId("gym_member_id")->references('id')->on('users')->onDelete('cascade');
+            $table->foreignId("package_id")->references('id')->on('packages')->onDelete('cascade');
+            $table->foreignId("gym_id")->references('id')->on('gyms')->onDelete('cascade');
+            $table->decimal('paid_amount', 8, 2);
             $table->timestamps();
         });
     }
@@ -28,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('gym_managers');
+        Schema::dropIfExists('stripe_operations');
     }
 };

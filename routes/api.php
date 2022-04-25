@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\StripeController;
 use App\Http\Controllers\Api\BanController;
 use App\Http\Controllers\Api\CityController;
 use App\Http\Controllers\Api\CityMangerController;
+use App\Http\Controllers\Api\StripeOperationController;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
@@ -85,9 +86,43 @@ Route::group(['middleware'=>'auth:sanctum','middleware'=>'atLeastGymManager'],fu
 
 });
 
+// Route::resource('users',UserController::class);
+Route::resource('citymanagers',CityMangerController::class)->except(['update']);
+Route::post('citymanagers/{id}/update',[CityMangerController::class,'update']);
+Route::get('cities-without-manager',[CityController::class,'withoutManager']);
+Route::resource('cities',CityController::class)->except(['update']);
+Route::post('citymanagers/{id}/update',[CityMangerController::class,'update']);
+Route::post('cities/{id}/update',[CityController::class,'update']);
+
+//Gym manager routes
+Route::resource('sessions', SessionController::class);
+Route::post('sessions/{id}/update',[SessionController::class,'update']);
+Route::resource('coaches', CoachController::class);
+Route::post('coaches/{id}/update',[CoachController::class,'update']);
+Route::resource('packages', PackageController::class);
+Route::post('packages/{id}/update',[CoachController::class,'update']);
+Route::resource('gymmanagers', GymManagerController::class)->except(['update']);
+Route::get('gymmanagers-withoutGyms', [GymManagerController::class,'withoutGyms']);
+Route::post('gymmanagers/{id}/update',[GymManagerController::class,'update']);
+
+
+//StripeOperation routes
+Route::resource('stripe/operation',StripeOperationController::class)->except(['update']);
+Route::get('stripe/operation/{id}/update',[StripeOperationController::class,'update']);
+Route::get('stripe/operationformat',[StripeOperationController::class,'stripeFormat']);
+
+//Attendances routes
+Route::resource('attendances', AttendanceController::class)->except(['update']);;
+Route::get('attendancesformat', [AttendanceController::class,'AttendanceFormat']);
+
+//Gym Route
+Route::resource('gyms', GymController::class);
+Route::post('gyms/{id}/update',[GymController::class,'update']);
+Route::post('gym-remove-manager',[GymController::class,'removeManager']);
+Route::post('gym-add-manager',[GymController::class,'addManager']);
 
 //Payment gateway routes
-Route::post('stripe', [StripeController::class, 'stripePost'])->name('stripe.post');
+Route::post('stripe/token', [StripeController::class, 'stripePost'])->name('stripe.post');
 Route::post('stripe/customer', [StripeController::class, 'createCustomer'])->name('stripe.customer');
 Route::post('stripe/charge', [StripeController::class, 'createCharge'])->name('stripe.charge');
 Route::post('stripe/createRefund', [StripeController::class, 'createRefund'])->name('stripe.refund');

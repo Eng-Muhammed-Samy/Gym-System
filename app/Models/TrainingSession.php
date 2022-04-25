@@ -57,4 +57,14 @@ class TrainingSession extends Model
         return $overlappingSessions;
     }
 
+    public function isActive(){
+        $now = Carbon::now();
+        $startTime = Carbon::parse($this->start_time);
+        $endTime = Carbon::parse($this->end_time);
+        if($this->session_date >= $now->format('Y-m-d') && $now->between($startTime,$endTime) ){
+            return true;
+        }
+        return false;
+    }
+
 }

@@ -81,4 +81,13 @@ class AttendanceController extends Controller
         }
         return response()->json("Sucessfully deleted", 204);
     }
+
+    public function AttendanceFormat () {
+        $Attendees= Attendance::all();
+        foreach($Attendees as $Attendee ){
+            $Attendee->user_id= $Attendee->getUserNameAttribute();
+            $Attendee->training_session_id= $Attendee->getSessionNameAttribute();
+        }
+        return$Attendees ; 
+    }
 }

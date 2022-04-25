@@ -14,12 +14,13 @@ class CityManagerResource extends JsonResource
      */
     public function toArray($request)
     {
+        $city=$this->city;
         return[
             'id' => $this->user->id,
             'name' => $this->user->name,
             'email' => $this->user->email,
             'ban'=>$this->user->Ban,
-            'city'=>$this->city->name,
+            'city'=>$city?$city->name:null,
             'avatar_image' => $this->user->avatar_image,
             'created_at' => $this->created_at->format('Y-m-d'),
             'updated_at' => $this->updated_at->format('Y-m-d'),

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CityManager\StoreCityManagerRequest;
+use App\Http\Requests\CityManager\UpdateCityManagerRequest;
 use App\Http\Resources\CityManagerResource\CityManagerResource;
 use App\Http\Resources\UserResource;
 use App\Models\City;
@@ -21,8 +23,8 @@ class CityMangerController extends Controller
      */
     public function index()
     {
-        $CityManagers = User::where('role', 'city_manager')->get();
-        return response()->json(UserResource::Collection($CityManagers), 200);
+        $CityManagers = CityManager::all();
+        return response()->json(CityManagerResource::Collection($CityManagers), 200);
     }
 
     /**
@@ -31,25 +33,14 @@ class CityMangerController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreCityManagerRequest $request)
     {
         logger($request->city_id);
         try {
             $validatedRequest = Validator::make(
                 $request->all(),
-                ['name' => 'required',
-                'email' => 'required|email|unique:users',
-                'password' => 'required|min:6|confirmed',
-                'avatar_image' => 'nullable|image|mimes:jpeg,jpg|max:2048',
-                'city_id' => 'required|exists:cities,id,city_manager_id,NULL'],
-                [
-                'avatar_image.image' => 'this file must be image!',
-                'avatar_image.mimes' => 'image must be jpeg or jpg!',
-                'avatar_image.max' => 'image maxmum size is 2M!',
-                'city_id.required' => 'city is required!',
-                'city_id.exists' => 'this city not found!',
-                'city_id' => 'this city already has a city manager!',
-                ]
+                $request->rules(),
+                $request->messages()
             );
             if($validatedRequest->fails()){
                 logger("fails()");
@@ -89,11 +80,11 @@ class CityMangerController extends Controller
      */
     public function show($id)
     {
-        $citymanager = User::find($id);
+        $citymanager = User::find($id)->getRole;
         if (!$citymanager) {
-            return response()->json(['error' => 'City Manager not found']);
+            return response()->jsonx(['error' => 'City Manager not found']);
         }
-        return response()->json(new UserResource($citymanager), 200);
+        return response()->json(new CityManagerResource($citymanager), 200);
     }
     /**
      * Update the specified resource in storage.
@@ -102,21 +93,14 @@ class CityMangerController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateCityManagerRequest $request, $id)
     {
         $citymanager = User::where('id',$id)->where('role', 'city_manager')->first();
         if ($citymanager) {
             try {
-                $validatedRequest = $request->validate([
-                    'name' => 'required|string',
-                    'email' => "required|email|unique:users,email,$id,id",
-                    // 'avatar_image' => 'image|mimes:jpeg,jpg|max:2048',
-                ]
-                // , $messages = [
-                //     'avatar_image.image' => 'this file must be image!',
-                //     'avatar_image.mimes' => 'image must be jpeg or jpg!',
-                //     'avatar_image.max' => 'image maxmum size is 2M!',
-                // ]
+                $validatedRequest = validator::make(
+                    $request->rules(),
+                    $request->messages()
             );
                 $citymanager->name = $validatedRequest['name'];
                 $citymanager->email = $validatedRequest['email'];
@@ -126,11 +110,15 @@ class CityMangerController extends Controller
                 // }
                 $citymanager->save();
             } catch (\Exception $e) {
-                return response()->json(['error' => $e->getMessage()]);
+                return response()->json([
+                    'status'=>'error',
+                    'error' => $validatedRequest->errors(),
+                    'message' => $e->getMessage()
+            ]);
             }
             return response()->json(new UserResource($citymanager));
         }
-        return response()->json(['error' => 'City Manager not found']);
+        return response()->json(['status'=>"error",'error' => ["city_id"=>'City Manager not found']]);
     }
     /**
      * Remove the specified resource from storage.
@@ -140,16 +128,25 @@ class CityMangerController extends Controller
      */
     public function destroy($id)
     {
-        $citymanager = User::find($id);
-        // return $citymanager;
-        if ($citymanager) {
+        logger(`user id is $id`);
+        $citymanager = CityManager::where('user_id',$id)->first();
+        $User =$citymanager->user;
+        // logger($User);
+        if ($citymanager && $User) {
             try {
+                if($citymanager->city){
+                    $citymanager->city->update(['city_manager_id' => null]);
+                    $citymanager->city->save();
+                }
                 $citymanager->delete();
-                return response()->json(['message' => 'City Manager deleted successfully'], 200);
+                // if($User->avatar_image != 'default.jpg')
+                //     unlink(public_path('avatars/'.$User->avatar_image));
+                $User->delete();
+                return response()->json(['status'=>'sucsess','message' => 'City Manager deleted successfully']);
             } catch (\Exception $e) {
-                return response()->json(['error' => $e->getMessage()], 400);
+                return response()->json(['status'=>'error','error' => $e->getMessage()]);
             }
         }
-        return response()->json(['error' => 'City Manager not found'], 404);
+        return response()->json(['status'=>'error','error' => 'City Manager not found']);
     }
 }

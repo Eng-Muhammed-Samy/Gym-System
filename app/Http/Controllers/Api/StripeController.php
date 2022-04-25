@@ -6,21 +6,22 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Cartalyst\Stripe\Stripe;
 
+
 class StripeController extends Controller
 {
     public function stripePost(Request $request)
     {
         $stripe = Stripe::make(env('STRIPE_SECRET'));
         try{
-            $token = $stripe->token()->create([
+            $token = $stripe->tokens()->create([
                 'card' => [
-                    'number' => $request->number,
-                    'exp_month' => $request->month,
-                    'exp_year' => $request->year,
-                    'cvc' => $request->cvc,
+                    'number'    => $request->card_number,
+                    'exp_month' => $request->card_expiry_month,
+                    'exp_year'  => $request->card_expiry_year,
+                    'cvc'       => $request->card_cvc,
                 ],
             ]);
-            return response()->json(['success' => true]);
+            return response()->json(['token' => $token]);
         }catch(\Exception $e){
             return response()->json(['error' => $e->getMessage()]);
         }
@@ -29,23 +30,27 @@ class StripeController extends Controller
         }
     }
 
+
     public function createCustomer(Request $request)
     {
         $stripe = Stripe::make(env('STRIPE_SECRET'));
         try{
             $customer = $stripe->customers()->create([
-                'name' => $request->first_name . ' ' . $request->last_name,
-                'email' => $request->email,
-                'phone' => $request->phone,
-                'address'=> [
-                    'line1' => $request->address,
-                    'city' => $request->city,
-                    'country' => $request->country,
-                    'postal_code' => $request->postal_code,
+                'customer' => [
+                    'name' => $request->name,
+                    'email' => $request->email,
+                    'phone' => $request->phone,
+                    "address"=>[
+                        "city"=> $request->address["city"],
+                        "country"=> "EG",
+                        "line1"=> $request->address["address"],
+                        "line2"=> null,
+                        "postal_code"=> $request->address["postal_code"],
+                        "state"=> null
+                    ],
                 ],
-                'source' => $request->stripeToken,
             ]);
-            return response()->json(['success' => true]);
+            return response()->json(['success' => true, 'customer' => $customer]);
         }catch(\Exception $e){
             return response()->json(['error' => $e->getMessage()]);
         }
@@ -58,11 +63,12 @@ class StripeController extends Controller
     {
         $stripe = Stripe::make(env('STRIPE_SECRET'));
         try{
+            // return $request->customer;
             $charge = $stripe->charges()->create([
-                'customer' => $request->customer,
                 'amount' => $request->amount,
                 'currency' => 'usd',
-                'description' => 'Order #' . $request->order_id,
+                'source' => $request->source,
+                'description' => 'My First Test Charge (created for API docs)',
             ]);
             return response()->json(['success' => true]);
         }catch(\Exception $e){
